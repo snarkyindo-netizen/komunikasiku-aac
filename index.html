@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#171717">
+<meta name="description" content="Aplikasi komunikasi berbasis gambar dan suara untuk membantu pengguna menyampaikan kebutuhan, aktivitas, dan perasaan.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg">
+<title>KomunikasiKu AAC</title>
+<style>
+:root{--bg:#101112;--header:#1b1c1e;--panel:#25272a;--card:#fff;--ink:#111;--muted:#72757a;--blue:#2396e8;--focus:#0b84ff;--danger:#d94141}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:Arial,Helvetica,sans-serif;background:var(--bg)}
+body{color:#fff}button,input,select{font:inherit}.app{min-height:100vh;display:flex;flex-direction:column}
+.header{background:var(--header);padding:clamp(10px,2vw,18px);position:sticky;top:0;z-index:20;box-shadow:0 2px 12px #0006}
+.top{display:flex;align-items:center;gap:10px;max-width:1400px;margin:auto;width:100%}.iconbtn{width:48px;height:48px;border:0;background:transparent;color:#fff;border-radius:10px;font-size:28px;cursor:pointer}.iconbtn:hover{background:#333}.title{font-size:clamp(17px,2vw,22px);font-weight:800;flex:1}.speak{border:1px solid #555;background:#282a2d;color:#fff;border-radius:14px;min-width:60px;min-height:48px;font-size:25px;cursor:pointer}.speak:active{transform:scale(.96)}
+.sentence{max-width:1400px;margin:10px auto 0;width:100%;min-height:70px;background:#2b2d30;border:1px solid #47494c;border-radius:13px;padding:8px;display:flex;align-items:center;gap:7px;overflow:auto}.word{background:#fff;color:#111;border-radius:8px;padding:9px 11px;font-weight:700;white-space:nowrap}.empty{color:#b9b9b9;flex:1;text-align:center}.clear{margin-left:auto;flex:none;border:0;background:#484a4d;color:#fff;border-radius:8px;padding:9px 12px;cursor:pointer}
+.tabs{background:#111;display:flex;gap:6px;overflow:auto;padding:9px max(10px,calc((100% - 1400px)/2));scrollbar-width:thin}.tabs button{white-space:nowrap;background:#292b2e;border:1px solid #4a4c4f;color:#fff;border-radius:9px;padding:10px 14px;cursor:pointer}.tabs button.active{background:var(--blue);border-color:var(--blue)}
+.main{width:min(1400px,100%);margin:auto;padding:0 10px 20px;flex:1}.heading{padding:12px 4px;color:#d8d8d8;font-weight:800;font-size:15px}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px}
+.card{background:var(--card);color:var(--ink);border:0;border-radius:6px;min-height:150px;padding:12px 7px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:8px;cursor:pointer;font-weight:800;text-align:center;box-shadow:0 1px 2px #0003}.card:hover{box-shadow:0 3px 9px #0005}.card:active{transform:scale(.975)}.card:focus-visible,.iconbtn:focus-visible,.tabs button:focus-visible,.action:focus-visible,.level:focus-visible{outline:4px solid var(--focus);outline-offset:2px}
+.pic{width:86px;height:86px;display:grid;place-items:center}.pic svg{width:86px;height:86px}.label{font-size:clamp(14px,1.5vw,18px)}.sub{font-size:12px;color:#707070;font-weight:500}
+.levels{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px}.level{border:1px solid #555;background:#2a2c2f;color:#fff;border-radius:10px;padding:12px;cursor:pointer;font-weight:800}.level.active{background:var(--blue);border-color:var(--blue)}
+.panel{background:#222426;border-radius:12px;padding:14px;margin:10px 0}.panel h3{margin:0 0 10px}.row{display:flex;gap:10px;align-items:center;margin:10px 0}.row label{width:120px;color:#ddd}.row input,.row select,.row textarea{flex:1;min-width:0;padding:10px;border-radius:8px;border:1px solid #555;background:#fff;color:#111}.action{border:0;background:#fff;color:#111;border-radius:9px;padding:12px 14px;cursor:pointer;font-weight:800;margin:4px 0}.action.primary{background:var(--blue);color:#fff}.action.danger{background:#e74b4b;color:#fff}.actions{display:flex;flex-wrap:wrap;gap:7px}.back{border:0;background:#303235;color:#fff;border-radius:9px;padding:10px 13px;cursor:pointer;margin:10px 0}
+.status{background:#0d0e0f;color:#aaa;text-align:center;font-size:12px;padding:8px}.note{color:#bbb;font-size:13px;line-height:1.5}.custom-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.mini{background:#fff;color:#111;border-radius:9px;padding:10px;display:flex;align-items:center;gap:8px}.mini img{width:48px;height:48px;object-fit:contain}.mini button{margin-left:auto;border:0;background:#eee;border-radius:6px;padding:6px;cursor:pointer}
+.drawer{position:fixed;inset:0;background:#0008;z-index:50;display:none}.drawer.open{display:block}.drawer-box{width:min(340px,88vw);height:100%;background:#1d1f21;padding:18px;box-shadow:5px 0 20px #0008}.drawer-box h2{margin-top:0}.drawer-link{width:100%;text-align:left;border:0;background:#292b2e;color:#fff;border-radius:9px;padding:13px;margin:4px 0;cursor:pointer}
+.install{display:none}.small{font-size:12px;color:#aaa}
+@media (min-width:600px){.grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}.card{min-height:165px}}
+@media (min-width:900px){.grid{grid-template-columns:repeat(5,minmax(0,1fr));gap:7px}.card{min-height:175px}}
+@media (min-width:1200px){.grid{grid-template-columns:repeat(6,minmax(0,1fr))}.card{min-height:185px}}
+@media (max-width:520px){.row{display:block}.row label{display:block;width:auto;margin-bottom:5px}.custom-list{grid-template-columns:1fr}.pic,.pic svg{width:65px;height:65px}.card{min-height:130px}}
+@media (orientation:landscape) and (max-height:600px){.header{position:relative}.card{min-height:125px}}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+<header class="header">
+<div class="top">
+<button class="iconbtn" id="menu" aria-label="Buka menu">☰</button>
+<div class="title">KomunikasiKu AAC</div>
+<button class="speak" id="speak" aria-label="Ucapkan kalimat">🔊</button>
+</div>
+<div class="sentence" id="sentence"><div class="empty">Ketuk gambar untuk menyusun kalimat</div><button class="clear" id="clear" aria-label="Hapus kalimat">✕</button></div>
+</header>
+<nav class="tabs" id="tabs" aria-label="Kategori komunikasi"></nav>
+<main class="main" id="main"></main>
+<div class="status" id="status">Ketuk gambar untuk mendengar suara</div>
+</div>
+<div class="drawer" id="drawer"><aside class="drawer-box">
+<button class="back" id="closeMenu">✕ Tutup</button>
+<h2>KomunikasiKu</h2>
+<button class="drawer-link" data-go="Utama">🏠 Beranda</button>
+<button class="drawer-link" data-go="Kebutuhan">🍽️ Kebutuhan</button>
+<button class="drawer-link" data-go="Aktivitas">🏃 Aktivitas</button>
+<button class="drawer-link" data-go="Perasaan">😊 Perasaan</button>
+<button class="drawer-link" data-go="Level">🎯 Level Aktivitas</button>
+<button class="drawer-link" data-go="More">⋮ More</button>
+<p class="small">Didesain responsif untuk HP, tablet, laptop, dan desktop.</p>
+</aside></div>
+<script>
+const svg=(t)=>{const c='stroke="#202124" stroke-width="2.7" stroke-linecap="round" stroke-linejoin="round"';
+const m={
+yes:`<path d="M14 42l16 17L67 17" fill="none" stroke="#35b957" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>`,
+no:`<path d="M17 17l46 46M63 17L17 63" fill="none" stroke="#e34b43" stroke-width="10" stroke-linecap="round"/>`,
+stop:`<path d="M32 66c-5-7-8-15-8-24V28c0-4 6-4 6 0v14V18c0-4 6-4 6 0v24V14c0-4 6-4 6 0v28V19c0-4 6-4 6 0v24l5-7c3-4 8-1 6 4l-7 18c-3 7-7 10-12 10z" fill="#f0bf97" ${c}/>`,
+help:`<path d="M12 44c8-12 19-15 29-6M68 44C60 32 49 29 39 38" fill="none" ${c}/><path d="M20 36l-9 8 13 3M60 36l9 8-13 3" fill="#f0bf97" ${c}/><path d="M31 38l9-7 9 7" fill="none" ${c}/>`,
+food:`<circle cx="40" cy="22" r="9" fill="#f0bf97" ${c}/><path d="M26 68c1-16 7-27 14-27s13 11 14 27" fill="#6e91cf" ${c}/><path d="M48 37c6 3 9 7 10 12" fill="none" ${c}/><path d="M55 48h12" fill="none" ${c}/><path d="M50 45l10 5" fill="none" ${c}/><path d="M23 47q10-7 20 0" fill="none" ${c}/>`,
+water:`<circle cx="38" cy="23" r="9" fill="#f0bf97" ${c}/><path d="M25 68c1-15 7-26 13-26s12 11 14 26" fill="#8b6a55" ${c}/><path d="M49 42l15 8-4 7-15-8z" fill="#8dd4f7" ${c}/><path d="M56 48l-5-15" fill="none" ${c}/><path d="M58 29c2-3 5-3 7 0" fill="none" ${c}/>`,
+toilet:`<path d="M23 13h33v20H23z" fill="#b6e4ff" ${c}/><path d="M29 33h22c0 14-5 22-11 22s-11-8-11-22z" fill="#fff" ${c}/><path d="M40 55v13M31 68h18" fill="none" ${c}/><path d="M29 19h21" ${c}/><circle cx="49" cy="22" r="2" fill="#3c9ad9"/>`,
+bath:`<path d="M14 43h53v10H14z" fill="#d9efff" ${c}/><path d="M21 53v10M59 53v10" fill="none" ${c}/><path d="M24 41V24c0-7 11-8 11 0v5h14" fill="none" ${c}/><path d="M50 29c7 1 10 6 10 12" fill="none" ${c}/><circle cx="27" cy="20" r="2" fill="#7bc5eb"/><circle cx="34" cy="14" r="2" fill="#7bc5eb"/>`,
+sleep:`<rect x="14" y="47" width="52" height="17" rx="3" fill="#b8d7f4" ${c}/><path d="M19 46h28c7 0 11 4 11 9H19z" fill="#fff" ${c}/><circle cx="29" cy="42" r="8" fill="#f0bf97" ${c}/><path d="M24 43q5-4 10 0" fill="none" ${c}/><path d="M55 18h8M59 14v8M67 28h7M71 24v8" fill="none" ${c}/>`,
+learn:`<path d="M9 24l31-11 31 11-31 11z" fill="#f2cf6d" ${c}/><path d="M40 24v38M16 31v21M64 31v21" fill="none" ${c}/><path d="M17 52c11 8 35 8 46 0" fill="none" ${c}/><circle cx="29" cy="38" r="3" fill="#5e82bd"/><path d="M29 45v10" ${c}/>`,
+play:`<circle cx="40" cy="40" r="26" fill="#f2cf6d" ${c}/><path d="M33 26l23 14-23 14z" fill="#fff" ${c}/><path d="M18 17l4-5M62 17l-4-5" fill="none" ${c}/>`,
+music:`<path d="M49 17v36c0 7-16 10-16 1 0-7 16-9 16-1M49 17l19-5v29" fill="none" ${c}/><circle cx="27" cy="56" r="8" fill="#ef6b6b" ${c}/><circle cx="68" cy="48" r="8" fill="#ef6b6b" ${c}/><path d="M18 23l5-4 5 4M19 30l4-3 4 3" fill="none" ${c}/>`,
+happy:`<circle cx="40" cy="38" r="26" fill="#fff" ${c}/><circle cx="31" cy="33" r="3"/><circle cx="49" cy="33" r="3"/><path d="M27 46q13 15 26 0" fill="none" ${c}/><path d="M22 65q18 9 36 0" fill="#ef5160" ${c}/>`,
+sad:`<circle cx="40" cy="38" r="26" fill="#fff" ${c}/><circle cx="31" cy="33" r="3"/><circle cx="49" cy="33" r="3"/><path d="M27 51q13-14 26 0" fill="none" ${c}/><path d="M52 48c5 5 4 11-1 15" fill="none" stroke="#55aee6" stroke-width="3"/>`,
+angry:`<circle cx="40" cy="39" r="26" fill="#ffd8d8" ${c}/><path d="M28 31l9 4M52 31l-9 4" fill="none" stroke="#d94848" stroke-width="4"/><circle cx="31" cy="38" r="3"/><circle cx="49" cy="38" r="3"/><path d="M28 53q12-9 24 0" fill="none" ${c}/>`,
+fear:`<circle cx="40" cy="39" r="26" fill="#f2e7ff" ${c}/><circle cx="31" cy="36" r="4"/><circle cx="49" cy="36" r="4"/><ellipse cx="40" cy="51" rx="8" ry="6" fill="none" ${c}/><path d="M22 25l-5-5M58 25l5-5" fill="none" ${c}/>`,
+family:`<circle cx="40" cy="18" r="7" fill="#f0bf97" ${c}/><circle cx="18" cy="29" r="6" fill="#f0bf97" ${c}/><circle cx="62" cy="29" r="6" fill="#f0bf97" ${c}/><path d="M30 62c1-16 5-25 10-25s9 9 10 25M8 65c1-12 4-19 10-19s9 7 10 19M52 65c1-12 4-19 10-19s9 7 10 19" fill="#78a4dd" ${c}/>`,
+doctor:`<circle cx="40" cy="22" r="9" fill="#f0bf97" ${c}/><path d="M26 68c1-17 7-28 14-28s13 11 14 28" fill="#fff" ${c}/><path d="M40 40v24M31 51h18" fill="none" ${c}/><path d="M25 22h30" fill="none" ${c}/><circle cx="40" cy="51" r="7" fill="#e34b43" ${c}/><path d="M40 47v8M36 51h8" stroke="#fff" stroke-width="2.5"/>`,
+walk:`<circle cx="40" cy="16" r="7" fill="#f0bf97" ${c}/><path d="M40 24l-4 18 12 8M36 31l-12 10M36 42l-10 19M48 50l11 12" fill="none" stroke="#527dbb" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><path d="M15 67h50" fill="none" stroke="#62a85d" stroke-width="4"/>`,
+tv:`<rect x="12" y="15" width="56" height="39" rx="4" fill="#222" ${c}/><rect x="18" y="21" width="44" height="27" fill="#78bde8"/><path d="M34 64h12M40 54v10" fill="none" ${c}/><circle cx="40" cy="34" r="8" fill="#fff" opacity=".85"/>`,
+read:`<path d="M12 22q14-7 28 4v34q-14-10-28-3z" fill="#fff" ${c}/><path d="M68 22q-14-7-28 4v34q14-10 28-3z" fill="#fff" ${c}/><path d="M40 26v34" fill="none" ${c}/><path d="M22 33h10M22 41h10M50 33h10M50 41h10" fill="none" ${c}/>`,
+draw:`<path d="M16 60l38-38 9 9-38 38H16z" fill="#f2c46b" ${c}/><path d="M53 22l6-6 9 9-5 6z" fill="#e88f8f" ${c}/><path d="M13 67h54" fill="none" ${c}/>`,
+thanks:`<path d="M23 63c-4-8-7-16-7-24V25c0-3 5-3 5 0v15V18c0-4 6-4 6 0v22V14c0-4 6-4 6 0v27V19c0-4 6-4 6 0v24l5-7c3-4 8-1 6 4l-7 18c-3 7-8 10-13 10z" fill="#f0bf97" ${c}/><path d="M57 20l3 7 7 3-7 3-3 7-3-7-7-3 7-3z" fill="#f2cf6d" ${c}/>`,
+finish:`<path d="M17 18h15M17 18v44M17 62h15M32 40h31M52 30l11 10-11 10" fill="none" stroke="#222" stroke-width="4"/>`,
+default:`<circle cx="40" cy="40" r="27" fill="#eee" ${c}/><text x="40" y="48" text-anchor="middle" font-size="24">?</text>`};
+return `<svg viewBox="0 0 80 80" aria-hidden="true">${m[t]||m.default}</svg>`};
+const DATA={
+Utama:[['yes','Ya','Ya'],['no','Tidak','Tidak'],['help','Tolong','Tolong saya'],['stop','Berhenti','Berhenti'],['help','Saya ingin','Saya ingin'],['finish','Selesai','Sudah selesai'],['happy','Suka','Saya suka'],['sad','Tidak suka','Saya tidak suka'],['happy','Senang','Saya senang'],['sad','Sedih','Saya sedih'],['help','Bantuan','Saya membutuhkan bantuan'],['help','Halo','Halo']],
+Kebutuhan:[['food','Makan','Saya ingin makan'],['water','Minum','Saya ingin minum'],['toilet','Toilet','Saya ingin ke toilet'],['bath','Mandi','Saya ingin mandi'],['water','Air','Saya ingin minum air'],['sleep','Tidur','Saya ingin tidur'],['help','Obat','Saya membutuhkan obat'],['sad','Sakit','Saya merasa sakit'],['water','Dingin','Saya merasa dingin'],['happy','Panas','Saya merasa panas'],['doctor','Dokter','Saya ingin bertemu dokter'],['sad','Luka','Saya terluka']],
+Aktivitas:[['learn','Belajar','Saya ingin belajar'],['play','Bermain','Saya ingin bermain'],['music','Musik','Saya ingin mendengarkan musik'],['tv','Menonton','Saya ingin menonton'],['walk','Jalan','Saya ingin berjalan'],['help','Keluar','Saya ingin keluar'],['read','Membaca','Saya ingin membaca'],['play','Puzzle','Saya ingin bermain puzzle'],['play','Olahraga','Saya ingin olahraga'],['family','Keluarga','Saya ingin bertemu keluarga'],['help','Pulang','Saya ingin pulang'],['draw','Menggambar','Saya ingin menggambar']],
+Perasaan:[['happy','Senang','Saya merasa senang'],['sad','Sedih','Saya merasa sedih'],['angry','Marah','Saya merasa marah'],['fear','Takut','Saya merasa takut'],['sleep','Mengantuk','Saya mengantuk'],['sad','Tidak nyaman','Saya merasa tidak nyaman'],['happy','Sayang','Saya merasa sayang'],['happy','Tenang','Saya merasa tenang'],['happy','Sangat senang','Saya sangat senang'],['sad','Kecewa','Saya kecewa'],['help','Bingung','Saya bingung'],['happy','Percaya diri','Saya percaya diri']]};
+const LEVELS={
+1:[['help','Halo','Halo'],['food','Makan','Saya ingin makan'],['water','Minum','Saya ingin minum'],['toilet','Toilet','Saya ingin ke toilet'],['sleep','Tidur','Saya ingin tidur'],['help','Tolong','Tolong saya']],
+2:[['bath','Mandi','Saya ingin mandi'],['learn','Belajar','Saya ingin belajar'],['play','Bermain','Saya ingin bermain'],['sleep','Istirahat','Saya ingin istirahat'],['help','Obat','Saya membutuhkan obat'],['help','Bicara','Saya ingin berbicara'],['help','Berjalan','Saya ingin berjalan'],['help','Pulang','Saya ingin pulang']],
+3:[['help','Perhatian','Saya membutuhkan perhatian'],['help','Berbicara','Saya ingin berbicara'],['help','Bertanya','Saya ingin bertanya'],['family','Keluarga','Saya ingin bertemu keluarga'],['learn','Sekolah','Saya ingin pergi ke sekolah'],['doctor','Dokter','Saya ingin bertemu dokter'],['help','Telepon','Saya ingin menelepon seseorang'],['thanks','Terima kasih','Terima kasih']]};
+let current='Utama',level=1,words=[];
+const $=s=>document.querySelector(s),main=$('#main'),tabs=$('#tabs'),sentence=$('#sentence'),status=$('#status');
+const cats=[['Utama','⭐ Utama'],['Kebutuhan','🍽️ Kebutuhan'],['Aktivitas','🏃 Aktivitas'],['Perasaan','😊 Perasaan'],['Level','🎯 Level'],['More','⋮ More']];
+function say(t){status.textContent='🔊 '+t;if('speechSynthesis'in window){speechSynthesis.cancel();let u=new SpeechSynthesisUtterance(t);u.lang='id-ID';u.rate=Number(localStorage.aacRate||.9);u.volume=Number(localStorage.aacVol||1);speechSynthesis.speak(u)}}
+function renderTabs(){tabs.innerHTML='';cats.forEach(([key,label])=>{let b=document.createElement('button');b.textContent=label;b.className=current===key?'active':'';b.onclick=()=>{current=key;render()};tabs.appendChild(b)})}
+function renderSentence(){sentence.querySelectorAll('.word,.empty').forEach(x=>x.remove());if(!words.length){let e=document.createElement('div');e.className='empty';e.textContent='Ketuk gambar untuk menyusun kalimat';sentence.insertBefore(e,$('#clear'));return}words.forEach(w=>{let x=document.createElement('span');x.className='word';x.textContent=w;sentence.insertBefore(x,$('#clear'))})}
+function add(item){words.push(item[2]);if(words.length>8)words.shift();renderSentence();say(item[2])}
+function card(item){let b=document.createElement('button');b.className='card';b.innerHTML=`<span class="pic">${svg(item[0])}</span><span class="label">${item[1]}</span>`;b.onclick=()=>add(item);return b}
+function grid(title,arr){main.innerHTML=`<div class="heading">${title}</div><div class="grid" id="grid"></div>`;arr.forEach(x=>$('#grid').appendChild(card(x)))}
+function renderLevel(){main.innerHTML='<div class="heading">Pilih tingkat aktivitas</div><div class="levels" id="levels"></div><div class="grid" id="grid"></div>';[1,2,3].forEach(n=>{let b=document.createElement('button');b.className='level '+(n===level?'active':'');b.innerHTML=`Level ${n}<br><small>${n===1?'Dasar':n===2?'Menengah':'Lanjutan'}</small>`;b.onclick=()=>{level=n;renderLevel()};$('#levels').appendChild(b)});LEVELS[level].forEach(x=>$('#grid').appendChild(card(x)))}
+function renderMore(){main.innerHTML=`<button class="back" id="back">← Kembali</button><div class="heading">More — Pengaturan & Personalisasi</div><section class="panel"><h3>🔊 Pengaturan suara</h3><div class="row"><label>Kecepatan</label><input id="rate" type="range" min=".5" max="1.5" step=".1" value="${localStorage.aacRate||.9}"></div><div class="row"><label>Volume</label><input id="vol" type="range" min="0" max="1" step=".1" value="${localStorage.aacVol||1}"></div><button class="action primary" id="test">🔊 Tes suara</button></section><section class="panel"><h3>📱 Penggunaan perangkat</h3><p class="note">Web ini responsif untuk ponsel, tablet, laptop, dan desktop. Jika browser mendukung PWA, aplikasi juga dapat dipasang ke layar utama.</p><button class="action" id="install" style="display:none">➕ Pasang ke perangkat</button></section><section class="panel"><h3>🧩 Personalisasi</h3><p class="note">Versi pengembangan berikutnya dapat menyimpan kartu gambar dan rekaman suara pengguna secara lokal di perangkat.</p><div class="actions"><button class="action" id="clear">🗑️ Kosongkan kalimat</button><button class="action" id="home2">🏠 Beranda</button></div></section>`;$('#back').onclick=()=>{current='Utama';render()};$('#rate').oninput=e=>localStorage.aacRate=e.target.value;$('#vol').oninput=e=>localStorage.aacVol=e.target.value;$('#test').onclick=()=>say('Halo, ini adalah suara komunikasi saya.');$('#clear').onclick=()=>{words=[];renderSentence()};$('#home2').onclick=()=>{current='Utama';render()};if(deferredPrompt){$('#install').style.display='block';$('#install').onclick=async()=>{deferredPrompt.prompt();deferredPrompt=null}}}
+function render(){renderTabs();if(current==='Level')return renderLevel();if(current==='More')return renderMore();grid(current==='Utama'?'Pilihan komunikasi utama':current,DATA[current]||DATA.Utama)}
+$('#menu').onclick=()=>$('#drawer').classList.add('open');$('#closeMenu').onclick=()=>$('#drawer').classList.remove('open');document.querySelectorAll('.drawer-link').forEach(b=>b.onclick=()=>{current=b.dataset.go;$('#drawer').classList.remove('open');render()});$('#speak').onclick=()=>words.length?say(words.join(' ')):status.textContent='Belum ada kalimat';$('#clear').onclick=()=>{words=[];renderSentence();status.textContent='Kalimat dikosongkan'};let deferredPrompt=null;window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e});renderSentence();render();
+if('serviceWorker'in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+</script>
+</body>
+</html>
